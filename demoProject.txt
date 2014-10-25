@@ -1,0 +1,5 @@
+https://github.com/google/closure-compiler.git,65401150
+http://git-wip-us.apache.org/repos/asf/logging-log4j2.git,f4253642
+https://github.com/cucumber/cucumber-jvm.git,5df09f85
+https://git.eclipse.org/r/p/jgit/jgit.git,bf33a6ee
+https://code.google.com/p/guava-libraries/,af2232f5

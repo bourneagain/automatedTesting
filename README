@@ -1,0 +1,59 @@
+#######################################################################################################
+#     About :  A brief description of scripts for automating the testing and their usage. 
+#     Please note at this moment some manual intervention is required as its not a fully automated process yet.
+######################################################################################################
+
+# executeTest.sh
+This is the master script for executing tests without Ekstazi ( pom changes ) 
+The script , given a clone url, and base revision to test, will clone the project and execute maven test for multiple revisions and output a collated table of executed tests, execution time etc as a csv
+
+# executeTestsWithEkstazi.sh
+This is the master script for executing tests with Ekstazi ( pom changes ) 
+PRECONDITION
+The script assumes you already have a repo ( GIT ) cloned and know the POM changes to be done for Ekstazi.
+Kindly save the reference POM ( modified for some POM version into a directory retaining the clone directory structure )
+Example for running Ekstazi on Guava,
+POM needs to be changed only under guava-tests/pom.xml : so save it under a directory like"
+			REFDIR/guava-tests/pom.xml and feed the REFDIR when requested for in the script execution
+The script saves each revision's pom under directory with the name of the revision. Since they are all modified before actual execution, they are copied into the repo's strcture when executing tests.
+
+# collateResults.sh
+This script helps to generate the final CSV output for charting purposes by scanning all the project's execution log and tabulating the results.
+Final CSV would contain the following columns
+	Project,version,Tests run,Failures,Errors,Skiped,Time elapsed,With/WithoutEkstazi details
+This script internally calls the following scripts
+* collateTime.py
+* generateChart.sh
+The scripts are such that each can be independantly called too.
+
+## collateTime.py
+This script will collate the execution time ,total tests executed for a project across revisions in case they have multiple test execution summaries.
+Input : File containing one or more version’s test execution log.
+Sample Output : : saved as <log>.TABLE format
+version,Tests run,Failures,Errors,Skipped,Time elapsed
+5759f1d,3662,0,2,13,123.801
+1e4bbe9,3662,0,2,13,122.999
+0eb059b,3662,0,2,13,115.434
+
+## generateChart.sh
+Script to automate collection of multiple project’s *.TABLE format under wEkstazi and woEkstazi directories for input to Tableau software as a csv.
+getProjects.sh
+
+# getProjects.sh
+Script to automate the testing various revisions of a given project. 
+Input : Clone directory & Base Commit [ Branch :=Master by default ] 
+Script shall execute  presently only for git repos and without Ekstazi integration.
+
+# joinlogs.sh
+Minor script to append execution details of various revision of a project in case they are saved seperately.
+
+# pomParser.py
+Tried using python's lxml XML parser to modify POM. 
+Several modules including elementTree, lxml module were tried out to edit pom.xml files. lxml turned out to be fast with wrapper functionality over core elementTree but work pending to take care of xmlns during search and replace. The code isnt production ready yet. I am working on it to add append/modify functionality still.
+
+# manualDiff.sh
+Script which shall make manual POM diff copy easy. It shall take a reference directory where POM modifications have been saved. And for every file , it shall popup the vimdiff for the checkout version's pom against the reference for easy POM modification.
+
+#savePom.sh
+An attempt, while working to automate the POM modification, to make POM modifications for Ekstazi across revisions easier. The script shall save POM files for every revision and use the manualDiff script to help user modify all the version's POMs at once. The modified POM can then be copied when getProjects.sh script executes for that release.
+
