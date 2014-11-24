@@ -1,5 +1,21 @@
+<<<<<<< .mine
+http://svn.apache.org/repos/asf/commons/proper/collections/trunk,r1635351,,svn,commons-coll4
+http://svn.apache.org/repos/asf/commons/proper/configuration/trunk,r1636042,,svn,commons-config
+http://svn.apache.org/repos/asf/commons/proper/lang/trunk,r1633907,,svn,commons-lang3
+http://svn.apache.org/repos/asf/commons/proper/math/trunk/,r1615790,,svn,commons-math
+https://github.com/apache/phoenix.git,bc89c9a,,git,phoenix
+https://github.com/goldmansachs/gs-collections.git,a28a7ee8,,git,gs-collections
+https://github.com/JodaOrg/joda-time.git,f36072e1,,git,joda-time
+https://github.com/google/closure-compiler.git,6092983,,git,closure-compiler
+=======
+https://code.google.com/p/guava-libraries/,af2232f5,cd guava-tests;mvn test
 https://github.com/google/closure-compiler.git,65401150
 http://git-wip-us.apache.org/repos/asf/logging-log4j2.git,f4253642
 https://github.com/cucumber/cucumber-jvm.git,5df09f85
 https://git.eclipse.org/r/p/jgit/jgit.git,bf33a6ee
-https://code.google.com/p/guava-libraries/,af2232f5
+https://github.com/apache/httpclient.git,6cad0904
+https://github.com/apache/storm.git,cfe7e631
+https://github.com/google/guice.git,377e1613
+https://github.com/wildfly/wildfly.git,72523f24
+https://github.com/JodaOrg/joda-time.git,f36072e1
+>>>>>>> .r2465

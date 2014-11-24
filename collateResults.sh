@@ -4,10 +4,9 @@
 # Author : Shyam Rajendran
 ################################################################################################
 LOGDIR=$1
-PWD=`pwd`
-
-COLLATESCRIPTPATH=`find . -type f -name "collateTime.py" | tail -1`
-GENERATETABLESCRIPTPATH=`find . -type f -name "generateChart.sh"| tail -1`
+SCRIPTDIR=$2
+COLLATESCRIPTPATH=$SCRIPTDIR"/collateTime.py"
+GENERATETABLESCRIPTPATH=$SCRIPTDIR"/generateChart.sh"
 
 echo ###
 echo ###

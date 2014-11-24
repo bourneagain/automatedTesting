@@ -71,5 +71,5 @@ coloredEcho "Execution completed"
 coloredEcho "**********************************"
 coloredEcho "STARTING TO COLLATE DATA FOR TABLE"
 coloredEcho "**********************************"
-bash collateResults.sh $RESULTSDIR $SCRIPTDIR
+#bash collateResults.sh $RESULTSDIR $SCRIPTDIR
 

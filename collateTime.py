@@ -11,7 +11,7 @@ if len(sys.argv) == 2:
 
 
 
-
+vCount=0;
 regexMatchVersionStart=re.compile(">>>>>>>>>>>>>>>>>>>> BEGIN COMMIT : (.+) :")
 regexMatchEnd=re.compile(">>>>>>>>>>>>>>>>>>>> END OF EXECUTION FOR")
 regexMatchTestLine=re.compile("Tests run:") 
@@ -20,6 +20,7 @@ regexMatchEmptyLine=re.compile("^$")
 def splitVersions(path):
 	global regexMatchVersionStart
 	global regexMatchEnd 
+	global vCount
 	version=""
 	data=[]
 	begin=0
@@ -34,10 +35,11 @@ def splitVersions(path):
 				summary(version,data)
 				data=[]
 				begin=0	
+				vCount=vCount+1
 				#print "SETTING BEGIN 0 "
 			if begin:
 				data.append(line)
-				
+	
 def summary(version,data):
 	#system('clear')
 	#print "SUMMARY <<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + str(len(data))
@@ -45,6 +47,7 @@ def summary(version,data):
 	global regexMatchTestLine 
 	global regexMatchEmptyLine 
 	global regexMatchVersionStart
+	global vCount
 	tcSum=etSum=failSum=lineSum=linec=errorSum=skipSum=entered=0
 	for line in data:
 		#print "VERSION IS " + version+":"+line
@@ -63,8 +66,8 @@ def summary(version,data):
 			failSum+=int(linearray[4].replace(",", ""))
 			skipSum+=int(linearray[8].replace(",", ""))
 			errorSum+=int(linearray[6].replace(",", ""))
-	print version+","+str(tcSum)+","+str(failSum) + "," + str(errorSum) +  "," +  str(skipSum)+ ","+str(etSum)
+	print str(vCount)+','+version+","+str(tcSum)+","+str(failSum) + "," + str(errorSum) +  "," +  str(skipSum)+ ","+str(etSum)
 
 #total(filepath)
-print "version,Tests run,Failures,Errors,Skipped,Time elapsed"
+print "commit-n,version,Tests run,Failures,Errors,Skipped,Time elapsed"
 splitVersions(filepath)

@@ -9,37 +9,31 @@ echo "#### DEMO FOR GATHERING TEST DATA ACROSS REVISIONS FOR BELOW PROJECTS [ TH
 echo "### Each sample project listed below "
 echo ##
 echo ##
-echo "`cat demoProject.txt`"
+echo "`cat demoProjectWithEkstazi.txt`"
 echo ##
 echo ##
-echo "Shall be run over 20 revisions and data collated in a CSV table for executed tests Vs Time."
+echo "shall be run over 20 revisions and data collated in a CSV table for executed tests Vs Time."
 echo ###
 echo ###
 echo "Please run this script within the script folder ####"
 
+
+
 IFS=$'\n'
-for i in `cat demoProject.txt`
+for i in `cat demoProjectWithEkstazi.txt`
 do
-<<<<<<< .mine
-		CLONEURL=`echo $i | awk -F, '{print $1}'`
-		BASEVERSION=`echo $i | awk -F, '{print $2}'`  
-		TESTCMD=`echo $i | awk -F, '{print $3}'`  
-		REPOFLAG=`echo $i | awk -F, '{print $4}'`  
-		PROJECT=`echo $i | awk -F, '{print $5}'`  
-=======
 CLONEURL=`echo $i | awk -F, '{print $1}'`
 BASEVERSION=`echo $i | awk -F, '{print $2}'`  
 TESTCMD=`echo $i | awk -F, '{print $3}'`  
->>>>>>> .r2465
 #LOGDIR="/tmp/SE_DEMOLOGS/"
-<<<<<<< .mine
-		LOGDIR=""
-		REVCOUNT=20
-		./executeTest.sh "demo" "$CLONEURL" "$BASEVERSION"  "$REVCOUNT" "$LOGDIR" "$TESTCMD" "${REPOFLAG}" "${PROJECT}" 
-=======
 LOGDIR=""
+<<<<<<< .mine
+REVCOUNT=3
+bash -ux executeTestWithEkstazi.sh "demo" $CLONEURL $BASEVERSION  $REVCOUNT "$LOGDIR" "${TESTCMD}" "${REPOFLAG}" "${PROJECT}"
+=======
 REVCOUNT=20
-bash executeTest.sh "demo" $CLONEURL $BASEVERSION  $REVCOUNT $LOGDIR "${TESTCMD}"
+bash executeTestWithEkstazi.sh "demo" $CLONEURL $BASEVERSION  $REVCOUNT $LOGDIR "${TESTCMD}"
+
 >>>>>>> .r2465
 done
 

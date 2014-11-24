@@ -1,0 +1,104 @@
+#!/bin/bash
+if [ $# -eq 0 ]; then echo If you want to check your own submission, call this as: $0 '<netid>'; fi
+mynetid=$1
+
+SDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo $SDIR
+. ${SDIR}/presenters.sh
+
+if [ ! -z ${mynetid} ]; then
+  cd /tmp
+  mkdir -p fa14-cs527
+else
+  cd ~
+  # assumes that https://subversion.ews.illinois.edu/svn/fa14-cs527 was checked out at home
+fi
+cd fa14-cs527
+
+function students() {
+  if [ ! -z ${mynetid} ]; then
+    echo ${mynetid}
+  else
+    cat _rosters/students.txt
+  fi
+}
+
+# luckily no report due on the 1st :)
+prev=$(echo ${date} | cut -f1 -d-)-$[ $(echo ${date} | cut -f2 -d-) - 1 ]
+for student in $(students); do
+  if [ ! -d ${student} ]; then
+    echo Checking out the entire directory.
+    svn co https://subversion.ews.illinois.edu/svn/fa14-cs527/${student}
+  fi
+  (
+    cd ${student}
+    echo Updating to the latest revision before the submission deadline.
+    if ! svn up -r "{"2014-${prev}T23:59:59-12:00"}"; then
+      echo your svn directory is potentially broken; try cleaning everything and rerunning the script:
+      echo rm -rf /tmp/fa14-cs527";" $0
+    fi
+  )
+done
+
+mon=`echo $date| cut -f1 -d-`
+dat=`echo $date| cut -f2 -d-`
+monf=$(printf "%02d" $mon)
+datf=$(printf "%02d" $dat)
+for i in 1 2; do
+  archive=hw${date}-${i}.zip
+  #>>shyam
+  #### Success will be reported for case insensitive match of hws submitted and with date/month swapped file names 
+  ### TESTED on find (GNU findutils) 4.4.2 & GNU bash, version 4.3.11
+  #if find . -type f -iname hw${date}-${i}.txt  |  xargs zip ${archive} 2>/dev/null 1>&2; then
+  cd ${mynetid}
+  if find  . -type f -regex "\./\(h\|H\)\(w\|W\)\(\(\(${mon}\|${monf}\)\-\(${dat}\|${datf}\)\)\|\(\(${dat}\|${datf}\)\-\(${mon}\|${monf}\)\)\)-${i}\.txt" |  xargs zip ${archive} 2>/dev/null 1>&2; then
+    echo Success: $(zipinfo -t ${archive} | cut -f1 -d,) in ${archive}
+	cd ..
+    if [ -z ${mynetid} ]; then
+      for netid in ${presenter[$[$i-1]]} ${summary[$[$i-1]]}; do
+        (
+          cd ${netid}
+          cp ../${archive} .
+          svn add ${archive}
+          svn ci -m "Added all reports for your paper." ${archive}
+          mail -s "reports in SVN" ${netid}@illinois.edu <<EOF
+The file hw${date}-${i}.zip with all reports for your paper is in your SVN directory now.
+Please follow up the instructions from
+https://wiki.cites.illinois.edu/wiki/display/cs527fa14/Syllabus
+and remember to do all the listed items (e.g., submit good and bad reports).
+
+Darko
+EOF
+        )
+      done
+      rm ${archive}
+    fi
+  else
+	cd ..
+    echo Warning: no report for ${archive}
+  fi
+done
+
+# create the initial score based on submitting the report on time
+if [ -z ${mynetid} ]; then
+  cd ~/fa14-cs527
+  for student in $(cat _rosters/students.txt); do
+    echo -n ${student},
+    if [ ${student} == ${presenter[0]} -o ${student} == ${presenter[1]} -o ${student} == ${summary[0]} -o ${student} == ${summary[1]} ]; then
+      echo 2
+    elif [ -f ${student}/hw${date}-1.txt -o -f ${student}/hw${date}-2.txt ]; then
+      echo 1
+    else
+      echo 0 - should be 2 for others from the same week
+    fi
+  done >_class/_private/hw${date}.csv
+  svn add _class/_private/hw${date}.csv
+  svn ci -m "Added the initial scores based on submitted reports for ${date}." _class/_private/hw${date}.csv
+  mail -s "reports for ${date}" pachika2@illinois.edu <<EOF
+The homework scores are in https://subversion.ews.illinois.edu/svn/fa14-cs527/_class/_private/hw${date}.csv
+Please manually change 0 to 2 for the other presenters/summary for this week,
+or update the script(s) to do so automatically.
+
+Darko
+EOF
+fi

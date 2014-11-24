@@ -1,0 +1,15 @@
+<<<<<<< .mine
+#https://github.com/JodaOrg/joda-time.git,f36072e1,,git,joda-time
+##https://github.com/google/closure-compiler.git,6092983,,git,closure-compiler
+#https://github.com/apache/phoenix.git,bc89c9a,,git,phoenix
+#https://github.com/goldmansachs/gs-collections.git,a28a7ee8,,git,gs-collections
+#http://svn.apache.org/repos/asf/commons/proper/collections/trunk,r1635351,,svn,commons-coll4
+#http://svn.apache.org/repos/asf/commons/proper/configuration/trunk,r1636042,,svn,commons-config
+http://svn.apache.org/repos/asf/commons/proper/lang/trunk,r1633907,,svn,commons-lang3
+http://svn.apache.org/repos/asf/commons/proper/math/trunk/,r1615790,,svn,commons-math
+=======
+https://github.com/JodaOrg/joda-time.git,f36072e
+https://code.google.com/p/guava-libraries/,af2232f5,cd guava-tests;mvn test
+https://github.com/google/closure-compiler.git,6092983
+
+>>>>>>> .r2465
