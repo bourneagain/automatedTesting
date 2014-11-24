@@ -40,15 +40,14 @@ restoreEkstazi() {
 coloredEcho(){
     local exp=$1;
     tput setaf 2;
-    echo `date`| $exp;
+    echo $exp;
     tput sgr0;
 }
 
 getInput() {
-	echo "COUNT $#"
+	clear
 	if [ "$1" == "demo" ] 
 	then
-		echo "COUNT IS $#"
 	    CLONEURL=${2}
 	    BASEVERSION=${3}
 	    REVCOUNT=${4} 
@@ -78,17 +77,28 @@ getInput() {
 
 	fi
 		echo "**************************************************************************************************************"
-		echo "******"
 		echo "INPUTS"
-		echo "******"
+		echo "**************************************************************************************************************"
 		echo "PROJECT  URL      : $CLONEURL"
 		echo "BASEVERSION       : $BASEVERSION"
 		echo "# of Revs to test : $REVCOUNT"
 		echo "LOGDIR            : $LOGDIR"
 		echo "FINAL LOGS AFTER EXECUTION WILL BE AVAILABLE UNDER $LOGDIR/woEkstazi/ directory"
-		echo "Press enter to continue after verification input"
-		if [[ ! "$1" == "demo" ]] 
+		echo "**************************************************************************************************************"
+		echo #
+		echo #
+		echo #
+		echo #
+		echo #
+		echo #
+		echo #
+		echo #
+		echo #
+		echo #
+
+		if [[  "$1" != "demo" ]] 
 		then
+			echo "Press enter to continue after verification input"
 			read a
 		fi
 

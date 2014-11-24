@@ -40,6 +40,7 @@ if [ -d $REPODIR/$PROJECT ]
 then
     coloredEcho "PROJECT PATH $REPODIR/$PROJECT ALREADY EXISTS"
     cd $REPODIR/$PROJECT
+	coloredEcho "LISTING FILES IN THE CLONE..."
     ls
 else
 	# START CLONING THE PROJECT 
@@ -49,7 +50,6 @@ else
 	cd $REPODIR/$PROJECT
 	ls
 fi
-
 
 
 coloredEcho " MOVING HEAD TO BASE COMMIT"
