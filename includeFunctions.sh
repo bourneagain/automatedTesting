@@ -40,7 +40,11 @@ restoreEkstazi() {
 coloredEcho(){
     local exp=$1;
     tput setaf 2;
+	echo #
+	echo `date`
     echo $exp;
+	echo `date`
+	echo #
     tput sgr0;
 }
 
@@ -180,7 +184,7 @@ saveReferencePOMS(){
 
 	# COUNT_REFPOM=`find ${REFDIR} -type f -name "*pom*" | grep SHA | grep -v "BASE" | wc -l | awk '{print $1}'`
 	COUNT_REFPOM=`svn ls ${REFDIR} | grep -c TESTED`
-
+	echo "TESTEDPRESENT  $COUNT_REFPOM"
 	if [[ "$COUNT_REFPOM" -gt 0 ]]; then
 		coloredEcho "ALL POMS ARE ALREADY AVAILABLE!"
 		#read a
@@ -197,25 +201,27 @@ saveReferencePOMS(){
 
 	        cp ${REFDIR}"/SHA/BASE_"${BASEVERSION}"/"${pomPath}    ${REFDIR}"/SHA/"${i}"/"${pomPath}
 	        echo "COPIED REF POM INTO REF DIR"
-	        #read a
 	        ##read a
 	        diffValue=`diff ${file} ${REPODIR}/${PROJECT}/${pomPath} | grep ^[\>\<] | wc -l | awk '{print $1}'`
 	        #this indicates difference in pom so the base'versions modified POM cannot be used here!!!
 			#read a
 	        echo "FILE DIFF IS ${diffValue}"
+	        #read a
 	        ##read a
 	        # if the new version pom is different from baseversions original pom ( without modification ) 
 	        # show vimdiff and save the changes under ${i} pom dif
 	        if [[ ${diffValue} -ne 0 ]] 
 	        then
-	            diffValue2=`diff ${REFDIR}"/SHA/BASE_"${BASEVERSION}"/"${pomPath} ${REPODIR}"/"${PROJECT}"/"${pomPath}`
+	            diffValue2=`diff ${REFDIR}"/SHA/BASE_"${BASEVERSION}"/"${pomPath} ${REPODIR}"/"${PROJECT}"/"${pomPath} | grep ^[\>\<] | wc -l | awk '{print $1}'`
 	            echo ${diffValue2}
+	        #read a
 	            if [[ ${diffValue2} -ne 0 ]] 
 	            then
                     vimdiff ${REFDIR}"/SHA/BASE_"${BASEVERSION}"/"${pomPath} ${REPODIR}"/"${PROJECT}"/"${pomPath} 
-	                cp ${REPODIR}"/"${PROJECT}"/"${pomPath} ${REFDIR}"/SHA/"${i}"/"`dirname ${pomPath}`
+	                cp ${REPODIR}"/"${PROJECT}"/"${pomPath} ${REFDIR}"/SHA/"${i}"/"${pomPath}
 	            fi
 	        fi
+	        #read a
 	    done
 	fi
 	done
@@ -289,6 +295,7 @@ runWithEkstazi(){
 	        repullPom ${REPOFLAG} ${pomDel} ${i}
 	        echo "COPIED FROM REF INTO REPO"
 	        cp ${REFDIR}"/SHA/"${i}"/"${pomPath}  ${REPODIR}"/"${PROJECT}"/"$pomPath
+			#read a
 	        #read a
 	    done
 	    coloredEcho "RUNNING $TESTCMD "

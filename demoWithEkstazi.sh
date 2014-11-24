@@ -28,7 +28,7 @@ do
 		REPOFLAG=`echo $i | awk -F, '{print $4}'`  
 		PROJECT=`echo $i | awk -F, '{print $5}'`  
 		LOGDIR=""
-		REVCOUNT=5
-		./executeTestWithEkstazi.sh "demo" $CLONEURL $BASEVERSION  $REVCOUNT $LOGDIR "${TESTCMD}" ${REPOFLAG} ${PROJECT}
+		REVCOUNT=20
+		bash -ux executeTestWithEkstazi.sh "demo" $CLONEURL $BASEVERSION  $REVCOUNT "$LOGDIR" "${TESTCMD}" ${REPOFLAG} ${PROJECT}
 done
 
