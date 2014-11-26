@@ -9,7 +9,7 @@ echo "#### DEMO FOR GATHERING TEST DATA ACROSS REVISIONS FOR BELOW PROJECTS [ TH
 echo "### Each sample project listed below "
 echo ##
 echo ##
-echo `cat projectList.txt | grep -v \# | egrep -v "^$"`
+echo "`cat projectList.txt`"
 echo ##
 echo ##
 echo "shall be run over 20 revisions and data collated in a CSV table for executed tests Vs Time."
@@ -33,13 +33,7 @@ do
     modules=(`echo $i | awk -F, '{print $7}'`)  
     version=`echo $i | awk -F, '{print $8}'`  
     PATCH=`echo $i | awk -F, '{print $9}'`  
-	DEMOFLAG=$1
-	if [[ "$1" == "" ]] ; then 
-		DEMOFLAG="demo"
-	else
-		DEMOFLAG="auto"
-	fi
-    ./executeTestWithEkstazi.sh "${DEMOFLAG}" "${CLONEURL}" "${BASEVERSION}"  "${REVCOUNT}" "$LOGDIR" "${TESTCMD}" "${REPOFLAG}" "${PROJECT}" "${surefire_version}" "${modules}" "${version}" "${PATCH}"
+    bash -ux executeTestWithEkstazi.sh "demo" $CLONEURL $BASEVERSION  $REVCOUNT "$LOGDIR" "${TESTCMD}" "${REPOFLAG}" "${PROJECT}" "${surefire_version}" "${modules}" "${version}" "{patch}"
 
 done
 

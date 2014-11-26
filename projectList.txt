@@ -1,10 +1,54 @@
 #FORMAT
-#<CLONEURL>,<BASEVERSION>,<COMMAND>,<REPOTYPE>,<PROJECTNAME:CUSTOM>
-#http://svn.apache.org/repos/asf/commons/proper/collections/trunk,r1635351,,svn,commons-coll4
-#http://svn.apache.org/repos/asf/commons/proper/configuration/trunk,r1636042,,svn,commons-config
-http://svn.apache.org/repos/asf/commons/proper/lang/trunk,r1633907,,svn,commons-lang3
-http://svn.apache.org/repos/asf/commons/proper/math/trunk/,r1615790,,svn,commons-math
-https://github.com/JodaOrg/joda-time.git,f36072e1,,git,joda-time
-https://github.com/apache/phoenix.git,bc89c9a,,git,phoenix
-https://github.com/goldmansachs/gs-collections.git,a28a7ee8,,git,gs-collections
-https://github.com/google/closure-compiler.git,6092983,,git,closure-compiler
+#<CLONEURL>,<BASEVERSION>,<COMMAND>,<REPOTYPE>,<PROJECTNAME:CUSTOM>,<surefire_version>,<module>,<specific_ekstazi>,<patch>
+#http://svn.apache.org/repos/asf/commons/proper/collections/trunk,r1635351,,svn,commons-coll4,,,,
+#http://svn.apache.org/repos/asf/commons/proper/configuration/trunk,r1636042,,svn,commons-config,,,,
+#http://svn.apache.org/repos/asf/commons/proper/lang/trunk,r1633907,,svn,commons-lang3,,,,
+#http://svn.apache.org/repos/asf/commons/proper/math/trunk/,r1615790,,svn,commons-math,,,,
+#https://github.com/JodaOrg/joda-time.git,f36072e1,,git,joda-time,,,,,,,
+#https://github.com/apache/phoenix.git,bc89c9a,,git,phoenix,,,,
+#https://github.com/goldmansachs/gs-collections.git,a28a7ee8,,git,gs-collections,,,,
+#https://github.com/google/closure-compiler.git,6092983,,git,closure-compiler,,,,
+
+
+
+#new additions as per other team's req
+#https://code.google.com/p/guava-libraries/,af2232f5,mvn test;cd guava-tests,git,guava,,guava-tests,,,
+#https://github.com/cucumber/cucumber-jvm.git,5df09f85,,git,cucumber,,4.2.0,
+
+http://svn.apache.org/repos/asf/logging/log4j/trunk,1344103,,svn,log4j,2.15,,4.2.0,patch_log4j.sh
+
+
+#patch run_ekstazi.sh < patch_jgit.txt
+#./run_ekstazi.sh -u "https://git.eclipse.org/r/p/jgit/jgit.git" -p "jgit" -v "4.2.0" -s "2.18"
+#patch -R run_ekstazi.sh < patch_jgit.txt
+#
+#
+#read -r -p "Do you want to continue and run ekstazi_parser on next project? [y/N] " response
+#checkKey "$response"
+#
+#./run_ekstazi.sh -u "https://github.com/netty/netty/" -p "netty" -s "2.15"
+#read -r -p "Do you want to continue and run ekstazi_parser on next project? [y/N] " response
+#checkKey "$response"
+#
+#patch run_ekstazi.sh < patch_log4j.txt
+#./run_ekstazi.sh -u "http://svn.apache.org/repos/asf/logging/log4j/trunk/" -p "log4j" -v "4.2.0" -s "2.15"
+#patch -R run_ekstazi.sh < patch_log4j.txt
+#read -r -p "Do you want to continue and run ekstazi_parser on next project? [y/N] " response
+#checkKey "$response"
+#
+#
+#./run_ekstazi.sh -u "http://svn.apache.org/repos/asf/commons/proper/pool/trunk" -p "pool"
+#read -r -p "Do you want to continue and run ekstazi_parser on next project? [y/N] " response
+#checkKey "$response"
+#
+#./run_ekstazi.sh -u "https://github.com/zxing/zxing.git"  -p "zxing" -s "2.18"
+#read -r -p "Do you want to continue and run ekstazi_parser on next project? [y/N] " response
+#checkKey "$response"
+#
+#./run_ekstazi.sh -u "https://github.com/apache/phoenix"  -p "phoenix" -s "2.16"
+#read -r -p "Do you want to continue and run ekstazi_parser on next project? [y/N] " response
+#checkKey "$response"
+#
+#./run_ekstazi.sh -u "http://svn.apache.org/repos/asf/gora/trunk/" -p "gora" -s "2.15"
+#read -r -p "Do you want to continue and run ekstazi_parser on next project? [y/N] " response
+#checkKey "$response"

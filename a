@@ -1,75 +1,115 @@
-	#!/bin/bash
+#!/bin/bash -u
 ################################
 # Author : Shyam Rajendran     #
 # Version : 1.0                #
+# About : This script is used to partially automate the effort of changing pom files per revision for running tests with Ekstazi. 
+#    For ekstazi, run tests on decreasing order of SHA i.e. from 20 to 1
+#    Add git clean -fxd and copy .ekstazi folder before executing test for a revision. 
+#    Merge TESTDIR and COMMAND in script arguments and ask user to write the commands directly ( optional or try to have different input fields ) 
+#    if same POM remains same across multiple revisions, don’t prompt vimdiff for each but instead use the manual diff on earlier pom for subsequent revisions as well. Save the modified pom per revision for subsequent use in svn.
+#    Change SVN permissions for executable scripts 
+#        Ex  - SVN prop:set executable demo.sh
+#    Check to run  mvm install -DslipTests for projects similar to guava- if you get snapshot error
 ################################
 
-#source functions.
+(
+#source functions
 source includeFunctions.sh
 
-
 SCRIPTDIR=`pwd`
+
+#GET ALL INPUTS
 getInput "$@" 
-if [[ $LOGDIR == "" ]] 
-then
-	LOGDIR=$SCRIPTDIR"/../logs/"
-fi
-if [[ $REVCOUNT == "" ]] 
-then
- 	REVCOUNT=1
-fi
+
+
+#SET GLOBAL VARIABLES AS PER SPECIFIC TEST CONDITION
 if [[ ${TESTCMD} == "" ]]
 then
-	TESTCMD="mvn test"
+    TESTCMD="mvn test"
 fi
-
-#GLOBAL VARIABLES
-RESULTSDIR=$LOGDIR
-REPODIR=$LOGDIR"/repoDir/"
-LOGDIR=$LOGDIR"/woEkstazi/"
-LOGNAME=$LOGDIR"/"${PROJECT}"_withoutEkstazi.log"
-
-#CREATING LOG AND REPO DIR 
-mkdir -p $LOGDIR 2>&1 > /dev/null
-mkdir -p $REPODIR 2>&1 > /dev/null
-
-
-
-
-if [ -d $REPODIR/$PROJECT ] 
+if [[ ${LOGDIR} == "" ]] 
 then
-    coloredEcho "PROJECT PATH $REPODIR/$PROJECT ALREADY EXISTS"
-    cd $REPODIR/$PROJECT
-    ls
-else
-	# START CLONING THE PROJECT 
-	cd $REPODIR
-	coloredEcho "  ISSUING CLONE COMMAND " >> $LOGNAME
-	pullClone ${REPOFLAG} ${2}
-	cd $REPODIR/$PROJECT
-	ls
+    LOGDIR=${SCRIPTDIR}"/../logs/"
+fi
+if [[ ${REVCOUNT} == "" ]] 
+then
+     REVCOUNT=1
+fi
+
+RESULTSDIR=${LOGDIR}
+REPODIR=${LOGDIR}"/repoDir/"
+LOGDIR=${LOGDIR}"/wEkstazi/"
+mkdir -p ${LOGDIR} 2>&1 > /dev/null
+mkdir -p ${REPODIR} 2>&1 > /dev/null
+EKSTAZIBACKUPFOLDER="/tmp/${PROJECT}"
+LOGNAME=$LOGDIR"/"${PROJECT}"_withEkstazi.log"
+if [[ ${REFDIR} == "" ]] 
+then
+    REFDIR=$SCRIPTDIR"/../logs/pomReferenceDir/"${PROJECT}"/"
+    if [[ ! -d ${REFDIR} ]] 
+    then
+    coloredEcho "***** THIS PROGRAM REQUIRES USER TO HAVE REFERENCE POM SAVED IN THE PATH ${REFDIR} ******** "
+    coloredEcho "QUITTING NOW!!!!"
+    exit
+    fi
 fi
 
 
+#BACKUP EKSTAZI DIR
+removeEkstaziDir ${EKSTAZIBACKUPFOLDER}
 
-coloredEcho " MOVING HEAD TO BASE COMMIT"
+#CLONE REPO : IF NOT CREATED ALREADY
+checkAndCloneRepo
+
+#MOVE HEAD TO BASE VERSION
 cloneCheckout ${REPOFLAG} ${BASEVERSION}
 
-#enter the clone
-cd ${PROJECT}
-# RUN TARGET TEST FOR EACH COMMIT
-coloredEcho "  RUNNING TEST FOR THE LAST $REVCOUNT FETCH COMMITS"
+#INSTALL SNAPSHOTS
+installSnapShots
 
-> ${LOGNAME}
+
+#installing old
+installEKTAZI "3.4.2"
+#installing new as well
+installEKTAZI "4.1.0"
+coloredEcho "EKSTAZI INSTALLED"
+read a
+#GET LAST N COMMITS TO GATHER DATA
 getLastNCommits ${REPOFLAG}
-#run iterative test
-runTest
+read a
+echo $LASTNCOMMITS
+
+IFS=$'\n'
+coloredEcho "#####"
+coloredEcho "#####"
+coloredEcho "You will be presented with ${REVCOUNT} files to modify"
+coloredEcho "Please use \":wqa!\" to save the file and quit after modification or \":xa!\" to quit without saving. Press to continue"
+coloredEcho "#####"
 
 #clear
+saveReferencePOMS
+read a
+
+coloredEcho "DONE WITH POM CHANGES FOR ALL THE ${REVCOUNT} VERSIONS"
+coloredEcho "STARTING TO EXECUTE WITH POM CHANGES FOR EKSTAZI. Press enter to continue"
+> ${LOGNAME}
+read a
+#START EXECUTION 
+runWithEkstazi
+exit
+
+
 cd $SCRIPTDIR
+echo #
+echo #
 coloredEcho "Execution completed"
+echo #
+echo #
 coloredEcho "**********************************"
 coloredEcho "STARTING TO COLLATE DATA FOR TABLE"
 coloredEcho "**********************************"
-#bash collateResults.sh $RESULTSDIR $SCRIPTDIR
+echo #
+echo #
+bash  collateResults.sh ${RESULTSDIR} ${SCRIPTDIR}
+)
 

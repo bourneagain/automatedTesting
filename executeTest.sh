@@ -1,4 +1,4 @@
-	#!/bin/bash
+#!/bin/bash
 ################################
 # Author : Shyam Rajendran     #
 # Version : 1.0                #

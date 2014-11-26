@@ -20,13 +20,13 @@ echo "Please run this script within the script folder ####"
 IFS=$'\n'
 for i in `cat projectList.txt | grep -v \#`
 do
-		CLONEURL=`echo $i | awk -F, '{print $1}'`
-		BASEVERSION=`echo $i | awk -F, '{print $2}'`  
-		TESTCMD=`echo $i | awk -F, '{print $3}'`  
-		REPOFLAG=`echo $i | awk -F, '{print $4}'`  
-		PROJECT=`echo $i | awk -F, '{print $5}'`  
-		LOGDIR=""
-		REVCOUNT=20
-		./executeTest.sh "demo" "$CLONEURL" "$BASEVERSION"  "$REVCOUNT" "$LOGDIR" "$TESTCMD" "${REPOFLAG}" "${PROJECT}" 
+	CLONEURL=`echo $i | awk -F, '{print $1}'`
+	BASEVERSION=`echo $i | awk -F, '{print $2}'`  
+	TESTCMD=`echo $i | awk -F, '{print $3}'`  
+	REPOFLAG=`echo $i | awk -F, '{print $4}'`  
+	PROJECT=`echo $i | awk -F, '{print $5}'`  
+	LOGDIR=""
+	REVCOUNT=20
+	./executeTest.sh "demo" "$CLONEURL" "$BASEVERSION"  "$REVCOUNT" "$LOGDIR" "$TESTCMD" "${REPOFLAG}" "${PROJECT}" 
 done
 

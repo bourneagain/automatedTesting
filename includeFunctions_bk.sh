@@ -93,7 +93,8 @@ getOptions(){
 
 getInput() {
 	clear
-	if [[ "$1" == "demo" || "$1" == "auto" ]] ;then
+	if [[ "$1" == "demo" -o "$1" == "auto" ]] 
+	then
 		# 1 "demo"
 		# 2 $CLONEURL
 		# 3 $BASEVERSION
@@ -131,7 +132,9 @@ getInput() {
 		echo "modules=(${10})"
 		echo "version=${11}"
 		echo "patch=${12}"
-		read a
+		exit
+
+
 	else
 		echo "**************************************************************************************************************"
 		echo "ABOUT"
@@ -243,10 +246,6 @@ resyncPom(){
 }
 
 saveReferencePOMS(){
-	if [[ "$1" == "auto" ]]	; then
-		return
-	fi
-
 	IFS=$'\n'
 	for i in ${LASTNCOMMITS}
 	do
@@ -351,30 +350,16 @@ checkAndCloneRepo(){
 
 }
 
-patchPOM(){
-	echo "PATCHING POM $pwd"
-	./${SCRIPTDIR}/patch_jgit.txt $1
-	read a
-}
-
-./run_ekstazi.sh -u "https://git.eclipse.org/r/p/jgit/jgit.git" -p "jgit" -v "4.2.0" -s "2.18"
-
-
-
 updatePOMandExecuteRun(){
 	for index in "${!modules[@]}"
 	do
 		echo "In project ${modules[index]},"
 		cd ${modules[index]}
-
 		if [ $surefire_check -eq "1" ]; then
 			java -jar ${SCRIPTDIR}/pom_parser.jar "${SCRIPTDIR}/${project}" "${version}" 	
 		else
 			java -jar ${SCRIPTDIR}/pom_parser.jar "${SCRIPTDIR}/${project}" "${version}" "${surefire_version}" 	
 		fi
-		patchPOM 
-		exit
-
 		autoRunWithEkstazi
 	done
 }
@@ -383,30 +368,7 @@ autoRunWithEkstazi(){
 
 }
 
-
-copyPOMAndExecute(){
-	for file in `find ${REFDIR} -type f -name "*pom*.xml" | grep "/SHA/BASE_${BASEVERSION}/"`
-	do
-	    pomPath=`echo $file | sed "s,^.*${PROJECT}//SHA/BASE_${BASEVERSION}/,,g" | sed 's,^/,,g'`
-	    pomDel=`echo ${pomPath} | sed -E 's,^/+,,g'  | sed 's,^/,,g'`
-	    coloredEcho "CHECKING OUT POM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-	    rm ${pomDel}
-	    repullPom ${REPOFLAG} ${pomDel} ${i}
-	    echo "COPIED FROM REF INTO REPO"
-	    cp ${REFDIR}"/SHA/"${i}"/"${pomPath}  ${REPODIR}"/"${PROJECT}"/"$pomPath
-		#read a
-	    #read a
-	done
-	coloredEcho "RUNNING $TESTCMD "
-	eval $TESTCMD | tee -a ${LOGNAME}
-	#read a
-	coloredEcho ">>>>>>>>>>>>>>>>>>>> END OF EXECUTION FOR $i " >> ${LOGNAME}
-}
-
-
 runWithEkstazi(){
-	echo "INSIDE PROJECT FOLDER $1"
-	AUTOFLAG=$2
 	for i in ${LASTNCOMMITS}
 	do
 	# RUN TEST FOR EACH COMMIT
@@ -416,12 +378,22 @@ runWithEkstazi(){
 	    cloneCleanup ${REPOFLAG}
 	    restoreEkstazi
 	    echo "ENTERING LOOP"
-	    if [[ ! "${AUTOFLAG}" == "auto" ]]; then
-	    	copyPOMAndExecute
-	    else
-	    	updatePOMandExecuteRun
-	    fi
 	    #read a
-	    
+	    for file in `find ${REFDIR} -type f -name "*pom*.xml" | grep "/SHA/BASE_${BASEVERSION}/"`
+	    do
+	        pomPath=`echo $file | sed "s,^.*${PROJECT}//SHA/BASE_${BASEVERSION}/,,g" | sed 's,^/,,g'`
+	        pomDel=`echo ${pomPath} | sed -E 's,^/+,,g'  | sed 's,^/,,g'`
+	        coloredEcho "CHECKING OUT POM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+	        rm ${pomDel}
+	        repullPom ${REPOFLAG} ${pomDel} ${i}
+	        echo "COPIED FROM REF INTO REPO"
+	        cp ${REFDIR}"/SHA/"${i}"/"${pomPath}  ${REPODIR}"/"${PROJECT}"/"$pomPath
+			#read a
+	        #read a
+	    done
+	    coloredEcho "RUNNING $TESTCMD "
+	    eval $TESTCMD | tee -a ${LOGNAME}
+	    #read a
+	    coloredEcho ">>>>>>>>>>>>>>>>>>>> END OF EXECUTION FOR $i " >> ${LOGNAME}
 	done
 }

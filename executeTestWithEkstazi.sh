@@ -18,6 +18,7 @@ source includeFunctions.sh
 
 SCRIPTDIR=`pwd`
 
+AUTOFLAG=$1
 #GET ALL INPUTS
 getInput "$@" 
 #SET GLOBAL VARIABLES AS PER SPECIFIC TEST CONDITION
@@ -41,16 +42,15 @@ mkdir -p ${LOGDIR} 2>&1 > /dev/null
 mkdir -p ${REPODIR} 2>&1 > /dev/null
 EKSTAZIBACKUPFOLDER="/tmp/${PROJECT}"
 LOGNAME=$LOGDIR"/"${PROJECT}"_withEkstazi.log"
-if [[ ${REFDIR} == "" ]] 
-then
-    REFDIR=$SCRIPTDIR"/../logs/pomReferenceDir/"${PROJECT}"/"
-    if [[ ! -d ${REFDIR} ]] 
-    then
-    coloredEcho "***** THIS PROGRAM REQUIRES USER TO HAVE REFERENCE POM SAVED IN THE PATH ${REFDIR} ******** "
-    coloredEcho "QUITTING NOW!!!!"
-    exit
-    fi
+
+
+
+if [[ ! "$AUTOFLAG" == "auto" ]]; then
+	checkREFDir
 fi
+
+
+
 
 
 #BACKUP EKSTAZI DIR
@@ -65,6 +65,7 @@ echo "ABOUT TO CHECKOUT"
 cloneCheckout ${REPOFLAG} ${BASEVERSION}
 
 echo "pwd : `pwd`"
+PPWD=`pwd`
 #read a
 #INSTALL SNAPSHOTS
 #installSnapShots
@@ -88,17 +89,20 @@ coloredEcho "You will be presented with ${REVCOUNT} files to modify"
 coloredEcho "Please use \":wqa!\" to save the file and quit after modification or \":xa!\" to quit without saving. Press to continue"
 coloredEcho "#####"
 
-saveReferencePOMS
-#read a
+> ${LOGNAME}
 
+saveReferencePOMS ${AUTOFLAG}
 echo "DONE WITH POM CHANGES FOR ALL THE ${REVCOUNT} VERSIONS"
 coloredEcho "STARTING TO EXECUTE WITH POM CHANGES FOR EKSTAZI. Press enter to continue"
-> ${LOGNAME}
+
+#read a
+
+
+
 #read a
 #START EXECUTION 
 
-
-runWithEkstazi
+runWithEkstazi ${PPWD} ${AUTOFLAG}
 
 
 cd $SCRIPTDIR
