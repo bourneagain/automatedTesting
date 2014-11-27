@@ -15,6 +15,7 @@ echo ###
 echo ###
 for j in `find $LOGDIR -type f -name "*.log"`
 do
+	sed -i -e "s/^.*>>>>>>>>>>>>>>>>>>>>/>>>>>>>>>>>>>>>>>>>>/g" $j
 	echo -ne "COLLETING RUN DETAILS FOR $j"
 	python $COLLATESCRIPTPATH $j > ${j}.TABLE
 	echo ": DONE"

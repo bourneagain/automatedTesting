@@ -30,7 +30,7 @@ do
 	LOGDIR=""
 	REVCOUNT=20
     surefire_version=`echo $i | awk -F, '{print $6}'`  
-    modules=(`echo $i | awk -F, '{print $7}'`)  
+    modules="`echo $i | awk -F, '{print $7}'`"
     version=`echo $i | awk -F, '{print $8}'`  
     PATCH=`echo $i | awk -F, '{print $9}'`  
 	DEMOFLAG=$1
@@ -39,11 +39,13 @@ do
 	else
 		DEMOFLAG="auto"
 	fi
-    ./executeTestWithEkstazi.sh "${DEMOFLAG}" "${CLONEURL}" "${BASEVERSION}"  "${REVCOUNT}" "$LOGDIR" "${TESTCMD}" "${REPOFLAG}" "${PROJECT}" "${surefire_version}" "${modules}" "${version}" "${PATCH}"
+
+    bash -ux ./executeTestWithEkstazi.sh "${DEMOFLAG}" "${CLONEURL}" "${BASEVERSION}"  "${REVCOUNT}" "$LOGDIR" "${TESTCMD}" "${REPOFLAG}" "${PROJECT}" "${surefire_version}" "${modules}" "${version}" "${PATCH}"
 
 done
 
 
+#bash -ux ./executeTestWithEkstazi.sh auto http://svn.apache.org/repos/asf/logging/log4j/trunk r1344103 2 '' '' svn log4j 2.15 . 4.2.0 patch_log4j.sh
 
 
 

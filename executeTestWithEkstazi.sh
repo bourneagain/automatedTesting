@@ -16,6 +16,8 @@
 #source functions
 source includeFunctions.sh
 
+read a
+
 SCRIPTDIR=`pwd`
 
 AUTOFLAG=$1
@@ -41,6 +43,7 @@ LOGDIR=${LOGDIR}"/wEkstazi/"
 mkdir -p ${LOGDIR} 2>&1 > /dev/null
 mkdir -p ${REPODIR} 2>&1 > /dev/null
 EKSTAZIBACKUPFOLDER="/tmp/${PROJECT}"
+read a
 LOGNAME=$LOGDIR"/"${PROJECT}"_withEkstazi.log"
 
 
@@ -61,21 +64,22 @@ checkAndCloneRepo
 
 #MOVE HEAD TO BASE VERSION
 echo "ABOUT TO CHECKOUT"
-#read a
+read a
 cloneCheckout ${REPOFLAG} ${BASEVERSION}
 
 echo "pwd : `pwd`"
 PPWD=`pwd`
-#read a
+read a
 #INSTALL SNAPSHOTS
-#installSnapShots
+installSnapShots
 
 #
 ##installing old
-#installEKTAZI "3.4.2"
+installEKTAZI "3.4.2"
 ##installing new as well
-#installEKTAZI "4.1.0"
+installEKTAZI "4.1.0"
 #coloredEcho "EKSTAZI INSTALLED"
+installEKTAZI "4.2.0"
 #
 #read a
 #GET LAST N COMMITS TO GATHER DATA
@@ -104,7 +108,7 @@ coloredEcho "STARTING TO EXECUTE WITH POM CHANGES FOR EKSTAZI. Press enter to co
 
 runWithEkstazi ${PPWD} ${AUTOFLAG}
 
-
+exit
 cd $SCRIPTDIR
 echo #
 echo #

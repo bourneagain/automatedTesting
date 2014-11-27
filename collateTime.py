@@ -39,7 +39,30 @@ def splitVersions(path):
 				#print "SETTING BEGIN 0 "
 			if begin:
 				data.append(line)
-	
+
+def parseTime(timeElapsed):
+	if timeElapsed == "NA":
+		return "NA"
+	#print timeElapsed
+	#01:05 min
+	#1:56.074s
+	min=timeElapsed.split(':')[0]
+	try:
+		sec=timeElapsed.split(':')[1]
+	except IndexError:
+		sec=min
+		sec=re.sub('\s+s', '', sec).split('.')[0]
+		return int(sec)
+		
+	sec=re.sub('s', '', sec).split('.')[0]
+	sec=re.sub('min', '', sec).split('.')[0]
+	#print min
+	#print sec
+	# parseTime.sec+=int(sec)
+	# parseTime.min+=int(min)
+	return int(min)*60+int(sec)
+		
+
 def summary(version,data):
 	#system('clear')
 	#print "SUMMARY <<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + str(len(data))
@@ -48,12 +71,16 @@ def summary(version,data):
 	global regexMatchEmptyLine 
 	global regexMatchVersionStart
 	global vCount
+	regexMatchTimeLine=re.compile("Total time: (.*)") 
+	timeElapsed="NA"
+	
 	tcSum=etSum=failSum=lineSum=linec=errorSum=skipSum=entered=0
 	for line in data:
-		#print "VERSION IS " + version+":"+line
 		linec+=1
 		if regexMatchEmptyLine.match(line):
 			continue	
+		if regexMatchTimeLine.search(line):
+			timeElapsed=regexMatchTimeLine.search(line).group(1)
 		if regexMatchTestLine.match(line):
 			#print "MATCH LINE " + line
 			linearray=line.split()
@@ -66,7 +93,9 @@ def summary(version,data):
 			failSum+=int(linearray[4].replace(",", ""))
 			skipSum+=int(linearray[8].replace(",", ""))
 			errorSum+=int(linearray[6].replace(",", ""))
-	print str(vCount)+','+version+","+str(tcSum)+","+str(failSum) + "," + str(errorSum) +  "," +  str(skipSum)+ ","+str(etSum)
+	#print str(vCount)+','+version+","+str(tcSum)+","+str(failSum) + "," + str(errorSum) +  "," +  str(skipSum)+ ","+str(etSum)
+
+	print str(vCount)+','+version+","+str(tcSum)+","+str(failSum) + "," + str(errorSum) +  "," +  str(skipSum)+ ","+str(parseTime(timeElapsed))
 
 #total(filepath)
 print "commit-n,version,Tests run,Failures,Errors,Skipped,Time elapsed"
