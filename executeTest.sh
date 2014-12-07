@@ -54,6 +54,8 @@ fi
 
 coloredEcho " MOVING HEAD TO BASE COMMIT"
 cloneCheckout ${REPOFLAG} ${BASEVERSION}
+#INSTALL SNAPSHOTS
+installSnapShots
 
 #enter the clone
 cd ${PROJECT}

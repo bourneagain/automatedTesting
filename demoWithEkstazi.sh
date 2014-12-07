@@ -40,7 +40,7 @@ do
 		DEMOFLAG="auto"
 	fi
 
-    bash -ux ./executeTestWithEkstazi.sh "${DEMOFLAG}" "${CLONEURL}" "${BASEVERSION}"  "${REVCOUNT}" "$LOGDIR" "${TESTCMD}" "${REPOFLAG}" "${PROJECT}" "${surefire_version}" "${modules}" "${version}" "${PATCH}"
+    ./executeTestWithEkstazi.sh "${DEMOFLAG}" "${CLONEURL}" "${BASEVERSION}"  "${REVCOUNT}" "$LOGDIR" "${TESTCMD}" "${REPOFLAG}" "${PROJECT}" "${surefire_version}" "${modules}" "${version}" "${PATCH}"
 
 done
 

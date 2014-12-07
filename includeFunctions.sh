@@ -1,14 +1,14 @@
 about(){
-echo "**********"
-echo "About"
-echo "**********"
-echo "This script is used for empirical evaluation of Ekstazi across multiple projects and revision. It partially automates the effort of changing pom files per revision"
-echo "" 
-echo "**********"
-echo "Usage"
-echo "**********"
-echo "./executeTestWithEkstazi.sh <args>"
-echo "ARGS"
+    echo "**********"
+    echo "About"
+    echo "**********"
+    echo "This script is used for empirical evaluation of Ekstazi across multiple projects and revision. It partially automates the effort of changing pom files per revision"
+    echo "" 
+    echo "**********"
+    echo "Usage"
+    echo "**********"
+    echo "./executeTestWithEkstazi.sh <args>"
+    echo "ARGS"
 }
 
 
@@ -136,7 +136,7 @@ getInput() {
             modules=(${10})
             version=${11}
             patch=${12}
-            surefire_check=$(awk 'BEGIN{ print "'${surefire_version}'"=="0.0" }')
+            surefire_check=$(awk 'BEGIN{ print "'${surefire_version}'" == "0.0" }')
 		fi
         echo "CLONEURL=${2}"
         echo "BASEVERSION=${3}"
@@ -447,7 +447,7 @@ runWithEkstazi(){
             #read a
         fi
         echo "ABOUT TO EXECUTE MVN TEST"
-        read a
+        #read a
         coloredEcho "RUNNING $TESTCMD "
         eval $TESTCMD | tee -a ${LOGNAME}
         #read a
@@ -477,4 +477,15 @@ updatePOMandExecuteRun(){
     # autoRunWithEkstazi
 }
 
-
+checkREFDir(){
+  if [[ ${REFDIR} == "" ]]
+  then
+      REFDIR=$SCRIPTDIR"/../logs/pomReferenceDir/"${PROJECT}"/"
+      if [[ ! -d ${REFDIR} ]]
+      then
+      coloredEcho "***** THIS PROGRAM REQUIRES USER TO HAVE REFERENCE POM SAVED IN THE PATH ${REFDIR} ******** "
+      coloredEcho "QUITTING NOW!!!!"
+      exit
+      fi
+  fi
+}

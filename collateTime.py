@@ -62,6 +62,14 @@ def parseTime(timeElapsed):
 	# parseTime.min+=int(min)
 	return int(min)*60+int(sec)
 		
+def findMatch(Array,checkString):
+	#print "SEARHING for " + checkString ,
+	#print Array
+	for i, ele in enumerate(Array):
+		if re.search(checkString, ele):
+	#		print "found " + str(i)
+			return i
+	return -1
 
 def summary(version,data):
 	#system('clear')
@@ -82,19 +90,33 @@ def summary(version,data):
 		if regexMatchTimeLine.search(line):
 			timeElapsed=regexMatchTimeLine.search(line).group(1)
 		if regexMatchTestLine.match(line):
-			#print "MATCH LINE " + line
-			linearray=line.split()
-			if len(linearray) == 9:
+			linearray=line.split(',')
+			#print linearray
+			testIndex=findMatch(linearray,'Tests run');
+			timeIndex=findMatch(linearray,'Time elapsed');
+			failIndex=findMatch(linearray,'Failures');
+			skipIndex=findMatch(linearray,'Skipped');
+			errorIndex=findMatch(linearray,'Errors');
+			if skipIndex == -1 or errorIndex == -1 or testIndex == -1 or failIndex == -1 or timeIndex == -1:
 				continue
+				pass
 
-			#Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.01 sec
-			tcSum+=int(linearray[2].replace(",", ""))
-			etSum+=float(linearray[11].replace(",", ""))
-			failSum+=int(linearray[4].replace(",", ""))
-			skipSum+=int(linearray[8].replace(",", ""))
-			errorSum+=int(linearray[6].replace(",", ""))
-	#print str(vCount)+','+version+","+str(tcSum)+","+str(failSum) + "," + str(errorSum) +  "," +  str(skipSum)+ ","+str(etSum)
-
+			try:
+					#print linearray[skipIndex].split(':')[1] 
+					if skipIndex != -1 :
+						skipSum+=int(linearray[skipIndex].split(':')[1])
+					if errorIndex != -1 :
+						errorSum+=int(linearray[errorIndex].split(':')[1])
+					if testIndex != -1 :
+						tcSum+=int(linearray[testIndex].split(':')[1])
+					if timeIndex != -1 :
+						etSum+=float(linearray[timeIndex].split(':')[1].split()[0])
+					if failIndex != -1 :
+						failSum+=int(linearray[failIndex].split(':')[1])  
+			except IndexError:
+					print "INDEX ERROR " ,
+					print linearray
+					print "----"
 	print str(vCount)+','+version+","+str(tcSum)+","+str(failSum) + "," + str(errorSum) +  "," +  str(skipSum)+ ","+str(parseTime(timeElapsed))
 
 #total(filepath)

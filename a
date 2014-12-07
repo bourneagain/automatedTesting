@@ -16,25 +16,24 @@
 #source functions
 source includeFunctions.sh
 
-read a
-
 SCRIPTDIR=`pwd`
 
-AUTOFLAG=$1
 #GET ALL INPUTS
 getInput "$@" 
+
+
 #SET GLOBAL VARIABLES AS PER SPECIFIC TEST CONDITION
 if [[ ${TESTCMD} == "" ]]
 then
-	TESTCMD="mvn test"
+    TESTCMD="mvn test"
 fi
 if [[ ${LOGDIR} == "" ]] 
 then
-	LOGDIR=${SCRIPTDIR}"/../logs/"
+    LOGDIR=${SCRIPTDIR}"/../logs/"
 fi
 if [[ ${REVCOUNT} == "" ]] 
 then
- 	REVCOUNT=1
+     REVCOUNT=1
 fi
 
 RESULTSDIR=${LOGDIR}
@@ -43,17 +42,17 @@ LOGDIR=${LOGDIR}"/wEkstazi/"
 mkdir -p ${LOGDIR} 2>&1 > /dev/null
 mkdir -p ${REPODIR} 2>&1 > /dev/null
 EKSTAZIBACKUPFOLDER="/tmp/${PROJECT}"
-#read a
 LOGNAME=$LOGDIR"/"${PROJECT}"_withEkstazi.log"
-
-
-
-if [[ ! "$AUTOFLAG" == "auto" ]]; then
-	checkREFDir
+if [[ ${REFDIR} == "" ]] 
+then
+    REFDIR=$SCRIPTDIR"/../logs/pomReferenceDir/"${PROJECT}"/"
+    if [[ ! -d ${REFDIR} ]] 
+    then
+    coloredEcho "***** THIS PROGRAM REQUIRES USER TO HAVE REFERENCE POM SAVED IN THE PATH ${REFDIR} ******** "
+    coloredEcho "QUITTING NOW!!!!"
+    exit
+    fi
 fi
-
-
-
 
 
 #BACKUP EKSTAZI DIR
@@ -63,29 +62,23 @@ removeEkstaziDir ${EKSTAZIBACKUPFOLDER}
 checkAndCloneRepo
 
 #MOVE HEAD TO BASE VERSION
-echo "ABOUT TO CHECKOUT"
-#read a
 cloneCheckout ${REPOFLAG} ${BASEVERSION}
 
-echo "pwd : `pwd`"
-PPWD=`pwd`
-#read a
 #INSTALL SNAPSHOTS
 installSnapShots
 
-#
-##installing old
+
+#installing old
 installEKTAZI "3.4.2"
-##installing new as well
+#installing new as well
 installEKTAZI "4.1.0"
-#coloredEcho "EKSTAZI INSTALLED"
-installEKTAZI "4.2.0"
-#
-#read a
+coloredEcho "EKSTAZI INSTALLED"
+read a
 #GET LAST N COMMITS TO GATHER DATA
 getLastNCommits ${REPOFLAG}
-#read a
+read a
 echo $LASTNCOMMITS
+
 IFS=$'\n'
 coloredEcho "#####"
 coloredEcho "#####"
@@ -93,32 +86,30 @@ coloredEcho "You will be presented with ${REVCOUNT} files to modify"
 coloredEcho "Please use \":wqa!\" to save the file and quit after modification or \":xa!\" to quit without saving. Press to continue"
 coloredEcho "#####"
 
-> ${LOGNAME}
+#clear
+saveReferencePOMS
+read a
 
-saveReferencePOMS ${AUTOFLAG}
-echo "DONE WITH POM CHANGES FOR ALL THE ${REVCOUNT} VERSIONS"
+coloredEcho "DONE WITH POM CHANGES FOR ALL THE ${REVCOUNT} VERSIONS"
 coloredEcho "STARTING TO EXECUTE WITH POM CHANGES FOR EKSTAZI. Press enter to continue"
-
-#read a
-
-
-
-#read a
+> ${LOGNAME}
+read a
 #START EXECUTION 
-
-runWithEkstazi ${PPWD} ${AUTOFLAG}
-
+runWithEkstazi
 exit
+
+
 cd $SCRIPTDIR
 echo #
 echo #
-echo "Execution completed"
+coloredEcho "Execution completed"
 echo #
 echo #
-echo "**********************************"
-echo "STARTING TO COLLATE DATA FOR TABLE"
-echo "**********************************"
+coloredEcho "**********************************"
+coloredEcho "STARTING TO COLLATE DATA FOR TABLE"
+coloredEcho "**********************************"
 echo #
 echo #
 bash  collateResults.sh ${RESULTSDIR} ${SCRIPTDIR}
 )
+
