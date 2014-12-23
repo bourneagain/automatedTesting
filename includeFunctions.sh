@@ -1,16 +1,9 @@
-about(){
-    echo "**********"
-    echo "About"
-    echo "**********"
-    echo "This script is used for empirical evaluation of Ekstazi across multiple projects and revision. It partially automates the effort of changing pom files per revision"
-    echo "" 
-    echo "**********"
-    echo "Usage"
-    echo "**********"
-    echo "./executeTestWithEkstazi.sh <args>"
-    echo "ARGS"
+testLogger(){
+    TYPE=$1
+    MSG=$2
+    LOGFILE=$3
+    echo "`date`|[${TYPE}]|${MSG}" | tee -a ${LOGFILE}
 }
-
 
 installEKTAZI() {
     version=$1
@@ -120,6 +113,7 @@ getInput() {
         # 10 ("${modules}")
         # 11 "${version}"
         # 12 "{patch}"
+        # 13 {TEST}"
         version="4.2.0"
         git_project="0"
         surefire_version="0.0"
@@ -131,13 +125,14 @@ getInput() {
         REPOFLAG=${7}
         PROJECT=${8}
         REFDIR=""
-		if [[ "$1" == "auto" ]] ; then 
+    	if [[ "$1" == "auto" ]] ; then 
             surefire_version=${9}
             modules=(${10})
             version=${11}
             patch=${12}
+            TESTFLAG=${13}
             surefire_check=$(awk 'BEGIN{ print "'${surefire_version}'" == "0.0" }')
-		fi
+    	fi
         echo "CLONEURL=${2}"
         echo "BASEVERSION=${3}"
         echo "REVCOUNT=${4} "
@@ -146,13 +141,12 @@ getInput() {
         echo "REPOFLAG=${7}"
         echo "PROJECT=${8}"
         echo "REFDIR="
-		if [[ "$1" == "auto" ]] ; then 
+    	if [[ "$1" == "auto" ]] ; then 
             echo "surefire_version=${9}"
             echo "modules=(${10})"
             echo "version=${11}"
             echo "patch=${12}"
-		fi
-        read a
+    	fi
     else
         echo "**************************************************************************************************************"
         echo "ABOUT"
@@ -196,10 +190,8 @@ getInput() {
         if [[  "$1" != "demo" ]] 
         then
             echo "Press enter to continue after verification input"
-            #read a
         fi
 
-    #clear
 }
 
 
@@ -209,7 +201,6 @@ pullClone(){
     else
         git clone $2 $PROJECT
     fi
-
 }
 
 
@@ -236,14 +227,14 @@ cloneCheckout(){
 getLastNCommits(){
     coloredEcho "FETCHING COMMIT INFORMATION FOR THE RECENT ${REVCOUNT}"
     if [[ "$1" == "svn" ]]; then
-		OS=`uname -a | awk '{print $1}'`
+    	OS=`uname -a | awk '{print $1}'`
         if [ "${OS}" ==  "Darwin" ]; then
             LASTNCOMMITS=`svn log --limit ${REVCOUNT}| perl -l40pe 's/^-+/\n/' | awk '{print $1}' | tail -r`
         else
             LASTNCOMMITS=`svn log --limit ${REVCOUNT}| perl -l40pe 's/^-+/\n/' | awk '{print $1}' | tac`
         fi
     else
-		OS=`uname -a | awk '{print $1}'`
+    	OS=`uname -a | awk '{print $1}'`
         if [ "${OS}" ==  "Darwin" ]; then
             LASTNCOMMITS=`git log -n ${REVCOUNT} --oneline | awk '{print $1}' | tail -r`
         else
@@ -251,9 +242,8 @@ getLastNCommits(){
         fi
 
     fi
-	echo "LAST COMMITS"
-	echo $LASTNCOMMITS 
-	#read a
+    echo "LAST COMMITS"
+    echo $LASTNCOMMITS 
 }
 
 
@@ -287,7 +277,6 @@ saveReferencePOMS(){
     do
     resyncPom
     echo "REFDIR is ${REFDIR}"
-    #read a
     # ref dir include trunk
     # get the pom for that base revision without change 
     # compare it against the checkout revision pom 
@@ -298,7 +287,6 @@ saveReferencePOMS(){
 
     if [[ "$COUNT_REFPOM" -gt 0 ]]; then
         coloredEcho "ALL POMS ARE ALREADY AVAILABLE!"
-        #read a
         break
     else
         for file in `find ${REFDIR} -type f -name "*pom*" | grep -v "/SHA/"`
@@ -312,27 +300,21 @@ saveReferencePOMS(){
 
             cp ${REFDIR}"/SHA/BASE_"${BASEVERSION}"/"${pomPath}    ${REFDIR}"/SHA/"${i}"/"${pomPath}
             echo "COPIED REF POM INTO REF DIR"
-            ##read a
             diffValue=`diff ${file} ${REPODIR}/${PROJECT}/${pomPath} | grep ^[\>\<] | wc -l | awk '{print $1}'`
             #this indicates difference in pom so the base'versions modified POM cannot be used here!!!
-            #read a
             echo "FILE DIFF IS ${diffValue}"
-            #read a
-            ##read a
             # if the new version pom is different from baseversions original pom ( without modification ) 
             # show vimdiff and save the changes under ${i} pom dif
             if [[ ${diffValue} -ne 0 ]] 
             then
                 diffValue2=`diff ${REFDIR}"/SHA/BASE_"${BASEVERSION}"/"${pomPath} ${REPODIR}"/"${PROJECT}"/"${pomPath} | grep ^[\>\<] | wc -l | awk '{print $1}'`
                 echo ${diffValue2}
-            #read a
                 if [[ ${diffValue2} -ne 0 ]] 
                 then
                     vimdiff ${REFDIR}"/SHA/BASE_"${BASEVERSION}"/"${pomPath} ${REPODIR}"/"${PROJECT}"/"${pomPath} 
                     cp ${REPODIR}"/"${PROJECT}"/"${pomPath} ${REFDIR}"/SHA/"${i}"/"${pomPath}
                 fi
             fi
-            #read a
         done
     fi
     done
@@ -388,23 +370,10 @@ checkAndCloneRepo(){
 
 patchPOM(){
     echo "PATCHING POM"
-	if [[ -f ${SCRIPTDIR}/${patch}  ]] ; then
+    if [[ -f ${SCRIPTDIR}/${patch}  ]] ; then
     	bash -ux ${SCRIPTDIR}/${patch}
-	fi
-    #read a
+    fi
 }
-
-#./run_ekstazi.sh -u "https://git.eclipse.org/r/p/jgit/jgit.git" -p "jgit" -v "4.2.0" -s "2.18"
-
-
-
-
-
-autoRunWithEkstazi(){
-
-    return 
-}
-
 
 copyPOMAndExecute(){
     for file in `find ${REFDIR} -type f -name "*pom*.xml" | grep "/SHA/BASE_${BASEVERSION}/"`
@@ -416,13 +385,7 @@ copyPOMAndExecute(){
         repullPom ${REPOFLAG} ${pomDel} ${i}
         echo "COPIED FROM REF INTO REPO"
         cp ${REFDIR}"/SHA/"${i}"/"${pomPath}  ${REPODIR}"/"${PROJECT}"/"$pomPath
-        #read a
-        #read a
     done
-    # coloredEcho "RUNNING $TESTCMD "
-    # eval $TESTCMD | tee -a ${LOGNAME}
-    # #read a
-    # coloredEcho ">>>>>>>>>>>>>>>>>>>> END OF EXECUTION FOR $i " >> ${LOGNAME}
 }
 
 
@@ -438,28 +401,21 @@ runWithEkstazi(){
         cloneCleanup ${REPOFLAG}
         restoreEkstazi
         echo "ENTERING LOOP"
-        #read a
         if [[ ! "${AUTOFLAG}" == "auto" ]]; then
             copyPOMAndExecute
-            #read a
         else
             updatePOMandExecuteRun 
-            #read a
         fi
         echo "ABOUT TO EXECUTE MVN TEST"
-        #read a
         coloredEcho "RUNNING $TESTCMD "
         eval $TESTCMD | tee -a ${LOGNAME}
-        #read a
         coloredEcho ">>>>>>>>>>>>>>>>>>>> END OF EXECUTION FOR $i " >> ${LOGNAME}
-        #read a
         
     done
 }
 updatePOMandExecuteRun(){
     for index in "${!modules[@]}"
     do
-        #read a
         echo "In project ${modules[index]},"
         cd ${modules[index]}
 
@@ -470,11 +426,9 @@ updatePOMandExecuteRun(){
         fi
         patchPOM 
     done
-	echo "ENTERING THE PROJECT PATH"
+    echo "ENTERING THE PROJECT PATH"
     cd "${REPODIR}"/"${PROJECT}"
-	pwd
-	#read a
-    # autoRunWithEkstazi
+    pwd
 }
 
 checkREFDir(){

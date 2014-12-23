@@ -1,0 +1,15 @@
+# THIS FILE IS POPULATED WITH LIST OF SANITY TEST CASES AVAILABLE UNDER /tests/
+
+# test for checking the EKSTAZI installation
+./test_installEKTAZI.sh 4.2.0
+
+# test for checking cloning repo for both SVN and GIT
+./test_pullClone.sh "https://github.com/JodaOrg/joda-time.git" "http://svn.apache.org/repos/asf/logging/log4j/trunk/"
+  
+# test clone cleanup
+./test_cloneCleanup.sh 
+
+# Below tests tests the functionality of the proper test count reduction by Ekstazi.
+# This test is takes a sample project and executes testing with Ektazi changes twice on the same revision. The expected behaviour is that second time the test should run ideally zero cases.
+./test_ekstaziReductionCheck.sh
+
