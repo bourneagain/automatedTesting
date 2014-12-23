@@ -1,4 +1,0 @@
-This directory contains a set of sanity tests for the functions included in /scripts/includeFunction.sh
-The list of testcases are populated under test.config file
-Success / Failure of the tests are made available in the directory /scripts/tests/logs
-They are named <functionName>.log and a summary of tests run of the format  <DATE>|<[INFO|SUCCESS|FAILURE|PASS|ERROR]>|TEST_LOG
