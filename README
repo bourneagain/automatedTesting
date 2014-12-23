@@ -1,5 +1,3 @@
-## THIS IS A DRAFT ... WORK IN PROGRESS
-#######################################
 About
 -----
 The project aimed to do an empirical study of Ekstazi tool by running the tool across multiple projects and revisions. The respective project results are then compared against executions without the Ekstazi tool with respect to test reduction time and reduction count. 
