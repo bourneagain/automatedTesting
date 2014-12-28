@@ -209,7 +209,7 @@ From the data collected for the above 17 projects from both Git and SVN across 2
 
 The execution results can be viewed online at https://public.tableausoftware.com/views/SEv1/EmpiricalEvaluationOfEkstazi?:embed=y&:display_count=no.  
 
-Observation and analysis for the anamolies are given below. The detailed observation results along with the screenshots can also be found at "report.pdf" in our SVN root directory.(https://subversion.ews.illinois.edu/svn/fa14-cs527/_projects/shmural2_srajend2/report.pdf)
+Observation and analysis for the anamolies are given below. The detailed observation results along with the screenshots can also be found at "report.pdf" 
 
 Observations Without Ekstazi
 --------------------------------
@@ -344,7 +344,7 @@ Observation:
 
 	[ERROR] COMPILATION ERROR :
 	[INFO] -------------------------------------------------------------
-	[ERROR] /Users/suhas/Documents/prj/Computer_Science/curriculum/SE_UIUC/23Nov/newSVN/shmural2_srajend2/logs/repoDir/gora/gora-core/src/main/java/org/apache/gora/query/ws/impl/QueryWSBase.java:[24,29] error: package org.apache.gora.filter does not exist
+
 Reason:
 	We tried re executing this project [ revision # r3384 for the log logs/woEkstazi/gora_withoutEkstazi.log  ] but since its now moved to GIT from SVN, we ran a fresh set of 20 revisions for both with and without Ekstazi. This time we see that there was no anomaly in the test result. The same can be viewed from the chart shared
 
